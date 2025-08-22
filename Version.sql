@@ -1,2 +1,2 @@
 SELECT Version();
-SELECT  '1'
+SELECT  '2'
