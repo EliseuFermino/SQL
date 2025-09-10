@@ -3,6 +3,7 @@
 --- CRIADO POR: Eliseu Fermino dos Santos
 --- Data: 09/09/23025
 --- OBJETIVO: Filtra osa dados de Sku's em Estoque e Sku's em Venda elimenta as tabelas abaixo para alimentar o Painel da Controladoria
+--- Gatilho: Esse script é dispoarado pelo Spoon - Atualiza Prezi (Pentahoo que atualiza o Prezi)
 
 -- ************************ SKU ESTOQUE *****************************************************************************
 truncate table stage.tbl_sku_estoque;
