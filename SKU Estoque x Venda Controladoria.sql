@@ -1,3 +1,20 @@
+
+with cte as (
+	SELECT mes_referencia, nroempresa, seqproduto, count(distinct seqproduto) as sku_estoque
+	FROM estoque.f_estoque
+	where nrodivisao = 2 and ESTQLOJA > 0 and MES_REFERENCIA = '2025-09-01'
+	group by mes_referencia, nroempresa, seqproduto
+)
+
+
+SELECT mes_referencia, nroempresa, a.seqproduto, 'sku_estoque', count(distinct a.seqproduto)
+FROM cte as a inner join bi.D_PRODUTO as b
+on a.SEQPRODUTO = b.SEQPRODUTO::int4 inner join bi.VW_D_COMPRADOR as c 
+on b.SEQCOMPRADOR::numeric = c.SEQCOMPRADOR
+where c.DESC_SECAO is not null
+group by mes_referencia, nroempresa, a.seqproduto ;
+
+---
 truncate table stage.tbl_sku_all;
 
 -- LOJA 06 ----------------------------------------------------------
