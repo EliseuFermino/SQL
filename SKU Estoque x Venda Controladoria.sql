@@ -1,4 +1,5 @@
 
+-- ************************ SKU ESTOQUE *****************************************************************************
 truncate table stage.tbl_sku_estoque;
 
 with cte as (
@@ -21,6 +22,32 @@ INSERT INTO stage.tbl_sku_estoque
 (mes_referencia, seqproduto, nroempresa, "?column?", count)
 SELECT mes_referencia, seqproduto, nroempresa, "?column?", count 
 FROM cte2 as a;
+
+-- *************************** SKU VENDA *****************************************************************************
+truncate table stage.tbl_sku_venda;
+
+WITH cte AS (
+	-- Encontra os produtos únicos vendidos por dia
+	SELECT dia_mes AS dia_inicial, seqproduto, NROEMPRESA 
+	FROM vendas.tbl_vendas_prod_mes_filial
+	WHERE dia_mes = '2025-09-01'
+	GROUP BY dia_mes, seqproduto, NROEMPRESA
+),
+ 
+cte1 AS (
+	-- Filtra e conta os SKUs para a divisão e comprador desejados
+	SELECT a.dia_inicial, COUNT(DISTINCT a.seqproduto) AS sku_venda, NROEMPRESA, a.seqproduto
+	FROM cte AS a 
+	INNER JOIN bi.d_produto AS b ON a.seqproduto = b.seqproduto::int
+	WHERE b.nrodivisao = '2' 
+	  AND b.seqcomprador <> '41'
+	GROUP BY a.dia_inicial, NROEMPRESA, a.seqproduto
+)
+
+INSERT INTO stage.tbl_sku_venda
+(dia_inicial, sku_venda, seqproduto_venda, nroempresa)
+select dia_inicial, sku_venda, seqproduto, nroempresa 
+from cte1 as a
 
 
 ---
