@@ -1,4 +1,9 @@
 
+--- EMPRESA: Tatico
+--- CRIADO POR: Eliseu Fermino dos Santos
+--- Data: 09/09/23025
+--- OBJETIVO: Filtra osa dados de Sku's em Estoque e Sku's em Venda elimenta as tabelas abaixo para alimentar o Painel da Controladoria
+
 -- ************************ SKU ESTOQUE *****************************************************************************
 truncate table stage.tbl_sku_estoque;
 
@@ -47,8 +52,9 @@ cte1 AS (
 INSERT INTO stage.tbl_sku_venda
 (dia_inicial, sku_venda, seqproduto_venda, nroempresa)
 select dia_inicial, sku_venda, seqproduto, nroempresa 
-from cte1 as a
+from cte1 as a;
 
+-- *********************** A T U A L I Z A Ç Õ E S ******************************************************************
 
 ---
 truncate table stage.tbl_sku_all;
