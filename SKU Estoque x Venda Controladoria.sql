@@ -293,7 +293,7 @@ DELETE FROM bi.tbl_sku_estoque_venda WHERE dia = CURRENT_DATE;
 
 INSERT INTO bi.tbl_sku_estoque_venda
 (dia, nroempresa, sku_estoque, sku_venda, dif_skus)
-SELECT CURRENT_DATE as Dia, nroempresa, count(sku_estoque) as sku_estoque, count(sku_venda) as sku_venda, count(sku_estoque) - count(sku_venda) as dif_skus
+SELECT CURRENT_DATE - 1 as Dia, nroempresa, count(sku_estoque) as sku_estoque, count(sku_venda) as sku_venda, count(sku_estoque) - count(sku_venda) as dif_skus
 FROM stage.tbl_sku_all
 GROUP BY CURRENT_DATE, nroempresa;
 
