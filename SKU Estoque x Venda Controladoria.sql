@@ -11,7 +11,7 @@ truncate table stage.tbl_sku_estoque;
 with cte as (
 	SELECT mes_referencia, nroempresa, seqproduto, count(distinct seqproduto) as sku_estoque
 	FROM estoque.f_estoque
-	where nrodivisao = 2 and ESTQLOJA > 0 and MES_REFERENCIA = '2025-09-01'
+	where nrodivisao = 2 and ESTQLOJA > 0 and MES_REFERENCIA = know.fn_date_bomonth_currentdate(CURRENT_DATE - 1)
 	group by mes_referencia, nroempresa, seqproduto
 ),
 
@@ -36,7 +36,7 @@ WITH cte AS (
 	-- Encontra os produtos únicos vendidos por dia
 	SELECT dia_mes AS dia_inicial, seqproduto, NROEMPRESA 
 	FROM vendas.tbl_vendas_prod_mes_filial
-	WHERE dia_mes = '2025-09-01'
+	WHERE dia_mes = know.fn_date_bomonth_currentdate(CURRENT_DATE - 1)
 	GROUP BY dia_mes, seqproduto, NROEMPRESA
 ),
  
