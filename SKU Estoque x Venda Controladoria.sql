@@ -297,5 +297,8 @@ SELECT CURRENT_DATE - 1 as Dia, nroempresa, count(sku_estoque) as sku_estoque, c
 FROM stage.tbl_sku_all
 GROUP BY CURRENT_DATE - 1, nroempresa;
 
+-- *********************** ATUALIZA OS 21 DIAS SEM VENDAS ****************************************************************************
+SELECT stage.fn_atualiza_sku_all(CURRENT_DATE - 1);
+
 
 
