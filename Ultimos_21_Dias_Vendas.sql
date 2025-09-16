@@ -31,11 +31,11 @@ AND b.DTA_POSICAO = '2025-09-14';
 
 
 
-ALter table stage.tbl_sku_all add PRECOBASENORMAL numeric;
-ALter table stage.tbl_sku_all add qtd_venda_d21 numeric;
+--ALter table stage.tbl_sku_all add PRECOBASENORMAL numeric;
+--ALter table stage.tbl_sku_all add qtd_venda_d21 numeric;
 
 
-CREATE INDEX tbl_prod_gyn_2025_idx_dta_seq_produto ON vendas.tbl_prod_gyn_2025 USING btree (dta, seqproduto);
+--CREATE INDEX tbl_prod_gyn_2025_idx_dta_seq_produto ON vendas.tbl_prod_gyn_2025 USING btree (dta, seqproduto);
 
 TRUNCATE TABLE vendas.f_venda_sku_all;
 
@@ -43,7 +43,7 @@ TRUNCATE TABLE vendas.f_venda_sku_all;
 WITH cte as (
 SELECT dta, nroempresa,  seqproduto,  quantidade 
 FROM vendas.tbl_prod_gyn_2025
-WHERE dta between '2025-08-25' and '2025-09-14'
+WHERE dta between '2025-08-25' and '2025-09-14'	-- 21 dias à partir do dia de ontem
 )
 
 INSERT INTO vendas.f_venda_sku_all
@@ -200,8 +200,3 @@ WHERE a.NROEMPRESA = b.NROEMPRESA::smallint
 AND a.SKU = b.SEQPRODUTO
 AND b.DTA = '2025-08-25';
 
-
-
-SELECT nrodivisao, nroempresa, seqproduto, seqprodutodiv, nrosegmento, statuscompra, statusvenda, estqloja, estqtroca, medvdiageral, medvdiapromoc, medvdiaforapromoc, cmultvlrnf, cmultcusliquidoemp, precobasenormal, precogerpromoc, mes_referencia, dta_posicao, dta_consulta
-FROM estoque.f_estoque
-WHERE SEQPRODUTO = '100345' and nrodivisao = '2' and nroempresa = '6';
