@@ -56,6 +56,19 @@ BEGIN
               (p_data_base - (i-1))::date);
         EXECUTE v_sql;
     END LOOP;
+
+	-- Atualiza Venda ------------------------------------------------------
+
+	truncate table vendas.tt_venda_item_sku_qtde;
+	
+	INSERT INTO vendas.tt_venda_item_sku_qtde
+	(dta, nroempresa, seqproduto, quantidade)
+	SELECT dta, NROEMPRESA::smallint, seqproduto::bigint, QUANTIDADE 
+	FROM vendas.tbl_prod_gyn_2025
+	WHERE dta between CURRENT_DATE - 90 AND CURRENT_DATE - 1   
+	  and seqproduto::bigint IN (SELECT sku::bigint FROM stage.tbl_sku_all)
+	;
+
 END;
 $$;
 
