@@ -15,3 +15,5 @@ SELECT dta_referencia, dtaentrada, nroempresa, seqproduto, qtdembalagem, embalag
 FROM cte as a;
 
 ---- TestANDO
+
+---tESTANDO
