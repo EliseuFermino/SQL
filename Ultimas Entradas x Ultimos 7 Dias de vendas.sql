@@ -269,3 +269,53 @@ WHERE dta in ('2025-10-14')  and seqproduto = 61622 and nroempresa = 6;
 SELECT dta, nroempresa, empresa, seqcomprador, comprador, seqproduto, descricao, quantidade, contagemprodutos, vlrvenda, vlrdesconto, vlroperacao, vlrtotalsemimpostos, vendapromoc, vlrlucratividade, vlrctobruto, vlrctoliquido, vlrverbavda, dta_consulta
 FROM vendas.tbl_prod_gyn_2025
 Where dta = '2025-10-14' and seqproduto = '61622' and nroempresa = '6';
+
+--------------------------------------------------------------------------------------------
+
+SELECT nroempresa, dia_inicio_mes, b.seqcomprador , 
+	sum(qtdvenda) as qtdvenda, sum(vlrvendabruto) as vlrvendabruto, sum(vlrpromoc) as vlrpromoc, sum(vlrlucratividade) as vlrlucratividade, sum(vlrverbavda) as vlrverbavda
+	into venda.f_venda_comprador_mes
+FROM venda.f_venda_produto_mes as a inner join cadastro.vw_d_produto as b 
+on a.seqproduto::varchar  = b.seqproduto
+WHERE a.dia_inicio_mes = '2025-10-01'
+GROUP BY nroempresa, dia_inicio_mes, b.seqcomprador
+limit 50;
+
+-- cadastro.d_produto definition
+
+-- Drop table
+
+-- DROP TABLE cadastro.d_produto;
+
+CREATE TABLE cadastro.d_produto (
+	nrodivisao smallint,
+	seqprodutodiv varchar(81) NULL,
+	seqproduto  NULL,
+	desccompleta varchar(255) NULL,
+	seqfamilia varchar(38) NULL,
+	seqcomprador varchar(3) NULL,
+	seqcategoria varchar(5) NULL,
+	caminhocompleto varchar(300) NULL,
+	dta_atualizacao timestamp NULL
+);
+CREATE INDEX idx_produto_caminhocompleto_textpattern ON cadastro.d_produto USING btree (caminhocompleto text_pattern_ops);
+CREATE INDEX idx_produto_seqproduto ON cadastro.d_produto USING btree (seqproduto);
+
+SELECT count(*)
+FROM drop table venda.f_venda_produto_mes;
+
+-------------------------------------------------------------------------------------------
+
+
+
+-- Insere os dados na partição ---------------------
+INSERT INTO venda.f_venda_produto_mes
+SELECT nroempresa, b.dia_inicio_mes , seqproduto, sum(qtdvenda) as qtdvend, sum(vlrvendabruto) as vlrvendabruto, 
+	sum(vlrpromoc) as vlrpromoc, sum(vlrlucratividade) as vlrlucratividade, sum(vlrverbavda) as vlrverbavda	
+FROM venda.f_venda_produto as a inner join cadastro.vw_d_calendario as b 
+ON a.dta = b.dia 
+WHERE dta >= DATE '2022-01-01' AND dta < DATE '2025-12-31'
+group by nroempresa, b.dia_inicio_mes , seqproduto;
+
+
+
