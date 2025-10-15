@@ -14,8 +14,6 @@ INSERT INTO stage.tbl_produtos_sem_venda_ultimo_7_dias
 SELECT dta_referencia, dtaentrada, nroempresa, seqproduto, qtdembalagem, embalagem, quantidade, quantidadeunit, vlrentrada
 FROM cte as a;
 
-
-
 CREATE OR REPLACE PROCEDURE stage.sp_produtos_sem_venda_ultimo_7_dias(p_data DATE)
 LANGUAGE plpgsql
 AS $$
@@ -64,7 +62,7 @@ BEGIN
 END;
 $$;
 
-CALL stage.sp_produtos_sem_venda_ultimo_7_dias('2025-10-13');
+CALL stage.sp_produtos_sem_venda_ultimo_7_dias('2025-10-14');
 
 CREATE OR REPLACE PROCEDURE stage.sp_produtos_sem_venda_ultimo_7_dias_atualiza_vendas(p_data DATE)
 LANGUAGE plpgsql
@@ -265,10 +263,9 @@ FROM stage.tbl_produtos_sem_venda_ultimo_7_dias WHERE ultima_entrada = '2025-10-
 
 SELECT nrodivisao, nroempresa, dta, seqproduto, qtdembalagem, statuscompra, statusvenda, qtdvenda, vlrvendabruto, vlrpromoc, vlrlucratividade, vlrverbavda, dta_atualizacao
 FROM venda.f_venda_produto
-WHERE dta in ('2025-10-11','2025-10-12')  and seqproduto = 92684 and nroempresa = 6;
+WHERE dta in ('2025-10-14')  and seqproduto = 61622 and nroempresa = 6;
 
 
 SELECT dta, nroempresa, empresa, seqcomprador, comprador, seqproduto, descricao, quantidade, contagemprodutos, vlrvenda, vlrdesconto, vlroperacao, vlrtotalsemimpostos, vendapromoc, vlrlucratividade, vlrctobruto, vlrctoliquido, vlrverbavda, dta_consulta
-INTO vendas.vi
 FROM vendas.tbl_prod_gyn_2025
-Where dta = '2025-10-13';
+Where dta = '2025-10-14' and seqproduto = '61622' and nroempresa = '6';

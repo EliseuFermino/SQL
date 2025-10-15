@@ -45,3 +45,38 @@ REFERENCES financeiro.excel_cadastro (id_conta)
 ON UPDATE CASCADE
 ON DELETE RESTRICT;
 
+
+create table financeiro.stg_file_forma_pagto (
+	dta_abertura date,
+	nroempresa smallint,
+	forma varchar(100),
+	valor numeric
+)
+
+DELETE FROM financeiro.excel_forma_pagto 
+WHERE dta_abertura IN (SELECT MAX(dta_abertura) FROM financeiro.stg_file_forma_pagto);
+
+INSERT INTO financeiro.excel_forma_pagto
+(dta_abertura, nroempresa, forma, valor)
+SELECT dta_abertura, nroempresa, forma, valor
+FROM financeiro.stg_file_forma_pagto;
+
+select * from financeiro.stg_file_forma_pagto;
+
+-- financeiro.excel_forma_pagto definition
+
+-- Drop table
+
+-- DROP TABLE financeiro.excel_forma_pagto;
+
+CREATE TABLE financeiro.excel_forma_pagto (
+	dta_abertura date NOT NULL,
+	nroempresa int2 NOT NULL,
+	forma varchar(100) NULL,
+	valor numeric NULL,
+	CONSTRAINT pk_dtabertura_nroempresa1 PRIMARY KEY (dta_abertura, nroempresa, forma)
+);
+
+
+SELECT dta_abertura, nroempresa, forma, valor
+FROM financeiro.excel_forma_pagto;
