@@ -1,0 +1,47 @@
+CREATE OR REPLACE PROCEDURE stage.sp_produtos_sem_venda_ultimo_7_dias(p_data DATE)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+-- Exclui os registros com base no filtro ------------------------------------------------------------------------------
+
+	-- SEMPRE A ANALISE SERA DOS ULTIMOS 7 DIAS. EXCLUIR O QUE FOR MAIOR QUE 7 DIAS
+	DELETE FROM stage.tbl_produtos_sem_venda_ultimo_7_dias
+    WHERE ultima_entrada < p_data - 6;
+
+	-- SEMPRE A ANALISE SERA DOS ULTIMOS 7 DIAS. EXCLUIR O QUE FOR MAIOR QUE ONTEM
+	DELETE FROM stage.tbl_produtos_sem_venda_ultimo_7_dias
+    WHERE ultima_entrada > p_data;
+
+	-- EXCLUI SE JA TIVER SIDo PROCESSADO
+    DELETE FROM stage.tbl_produtos_sem_venda_ultimo_7_dias
+    WHERE ultima_entrada = p_data;
+
+-- INSERE AS NF DE ENTRADA ---------------------------------------------------------------------------------------------
+	WITH cte AS (
+		SELECT dtaentrada, nroempresa, seqproduto, qtdembalagem, embalagem, 
+			sum(quantidade) as quantidade, sum(quantidadeunit) as quantidadeunit, sum(vlrentrada) as vlrentrada
+		FROM estoque.f_entradas
+		WHERE dtaentrada = p_data 
+		group by dta_referencia, dtaentrada, nroempresa, seqproduto, qtdembalagem, embalagem
+	)
+	
+	INSERT INTO stage.tbl_produtos_sem_venda_ultimo_7_dias
+	( ultima_entrada, nroempresa, sku_estoque, qtde_entrada)
+	SELECT  dtaentrada, nroempresa, seqproduto,  quantidadeunit
+	FROM cte as a;
+
+	CALL stage.sp_produtos_sem_venda_ultimo_7_dias_atualiza_vendas(p_data);
+
+	CALL stage.sp_produtos_sem_venda_ultimo_7_dias_atualiza_vendas(p_data - 1);
+    CALL stage.sp_produtos_sem_venda_ultimo_7_dias_atualiza_vendas(p_data - 2);
+	CALL stage.sp_produtos_sem_venda_ultimo_7_dias_atualiza_vendas(p_data - 3);
+	CALL stage.sp_produtos_sem_venda_ultimo_7_dias_atualiza_vendas(p_data - 4);
+    CALL stage.sp_produtos_sem_venda_ultimo_7_dias_atualiza_vendas(p_data - 5);
+	CALL stage.sp_produtos_sem_venda_ultimo_7_dias_atualiza_vendas(p_data - 6);	
+	
+	
+-------------------------------------------------------------------------------------------------------------------------------------
+    ---RAISE NOTICE 'Registros com ultima_entrada = % foram deletados com sucesso.', p_data;
+END;
+$$;
